@@ -112,7 +112,10 @@ function dingdata(msg)
 local userTotalCheck = getUserConf(msg.fromQQ,"总打卡次数",0)
 local userComboCheck = getUserConf(msg.fromQQ,"连续打卡",0)
 local userCheckOne = getUserConf(msg.fromQQ,"打卡时间",0)
-  return "{nick}已经累计铲屎"..math.floor(userTotalCheck).."天，连续铲屎"..math.floor(userComboCheck).."天了喵——"
+local today_ding = getUserToday(msg.fromQQ,"dingtimes",0)
+local coin=getUserConf(msg.fromQQ, "猫猫金币", 0)
+local bonus_arknights=getUserToday(msg.fromQQ, "today_draw_max", 0)
+  return "{nick}已经累计铲屎"..math.floor(userTotalCheck).."天，连续铲屎"..math.floor(userComboCheck).."天了喵——\n今日还有"..math.floor(5 - today_ding).."次机会在铲屎时遇到事件！\n口袋中现在有"..math.floor(coin).."枚金币和"..math.floor(3 - bonus_arknights).."张十连寻访券！"
 end
 
 
@@ -146,8 +149,9 @@ function draw_eventI(msg)
       end
   elseif(draw_arknights == 4)then
       local event="神秘金币"
+      local coin=getUserConf(msg.fromQQ, "猫猫金币", 0)
         setUserConf(msg.fromQQ, "猫猫金币", getUserConf(msg.fromQQ, "猫猫金币", 0)+1)
-        return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."你挖到了一枚印着猫猫图案的金币。\n你数了数口袋中的金币，现在有"..math.floor(getUserConf(msg.fromQQ, "猫猫金币")).."枚。"
+        return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."你挖到了一枚印着猫猫图案的金币。\n你数了数口袋中的金币，现在有"..math.floor(coin).."枚。"
   elseif(draw_arknights == 5)then
     local event="呆胶布"
     return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."呆比乱玩胶带，把铲子粘在地上了！你根本拿不起来，只能放弃铲屎的想法。"
@@ -169,7 +173,7 @@ function draw_eventI(msg)
   elseif(draw_arknights == 9)then
     local event="沉睡恶兽"
     local draw_result = math.random(0, 3)
-    if(draw_result == 10)then
+    if(draw_result == 0)then
       return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."呆比今天好困，在猫砂盆里睡着啦！你铲屎的难度变高了，你小心翼翼地铲了好久，最终也没能挖出寻访券。"
     else
       setUserToday(msg.fromQQ, "today_draw_max", getUserToday(msg.fromQQ, "today_draw_max", 0) - draw_result)

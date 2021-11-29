@@ -21,7 +21,7 @@ draw_state="寻访状态"
 draw_everyday_max=2
 --每日最大抽卡次数
 
-msg_everyday_max="今天的十连寻访券都用光啦！"
+msg_everyday_max="今天的十连寻访券都用光啦！给{self}[铲屎]有机会获得更多寻访券喔~"
 --超过最大抽卡次数回复
 
 master_qq="287887313"
@@ -41,7 +41,7 @@ function arknights_draw_main(msg)
          kj_pic="[CQ:image,url="
       end
       setUserToday(msg.fromQQ, "today_draw_max", getUserToday(msg.fromQQ, "today_draw_max", 0)+1)
-      return kj_pic.."http://api.dominoh.com/arknights/api.php]{nick}今天的最后1发！"
+      return kj_pic.."http://api.dominoh.com/arknights/api.php]{nick}今天的最后1发！给{self}[铲屎]有机会获得更多寻访券喔~"
       elseif(getUserToday(msg.fromQQ, "today_draw_max", 0)<draw_everyday_max)then
       if(kj_kind==1)then
          kj_pic="[pic="
