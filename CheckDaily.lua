@@ -28,7 +28,7 @@ end
 
 --限制今日重复打卡次数为5
 local ding_limit = 1
-local ding_ddl = 5
+local ding_ddl = 10
 local today_ding = getUserToday(msg.fromQQ,"dingtimes",0)--判断今日是否打卡
 
 if(today_ding>=ding_ddl)then
@@ -37,7 +37,14 @@ elseif(today_ding>=ding_limit)then
     if(bonus_arknights <= 30)then
       today_ding = today_ding + 1
       setUserToday(msg.fromQQ, "dingtimes", today_ding)
-      return "{nick}第"..math.floor(today_ding).."次在{self}的猫砂盆里奋力翻找着什么，但一无所获。"
+      local random=math.random()
+  if(random == 0)then
+    return "{nick}第"..math.floor(today_ding).."次在{self}的猫砂盆里奋力翻找着什么，但一无所获。"
+  else
+        setUserConf(msg.fromQQ, "猫猫金币", getUserConf(msg.fromQQ, "猫猫金币", 0)+ 1)
+        local coin=getUserConf(msg.fromQQ, "猫猫金币", 0)
+        return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……你没有找到寻访券，但挖到了一枚印着猫猫图案的金币。\n你数了数口袋中的金币，现在有"..math.floor(coin).."枚。"
+  end
     elseif(bonus_arknights <= 70)then
       today_ding = today_ding + 1
       setUserToday(msg.fromQQ, "dingtimes", today_ding)
@@ -57,7 +64,7 @@ elseif(today_ding>=ding_limit)then
       --local draw_result = math.random()
       return draw_eventIII(msg)
     else
-      return ""
+      return "如果你看到这条消息，说明出bug了，请握紧这条聊天记录，尽快找到多米诺并说明情况，他会处理一切的。"
       --setUserToday(msg.fromQQ, "today_draw_max", getUserToday(msg.fromQQ, "today_draw_max", 0) - bonus_arknights)
       --return "{nick}第"..math.floor(today_ding).."次翻找着{self}的猫砂盆，从里面找到了"..math.floor(bonus_arknights).."张十连寻访券！"
       --测试信息：\nuserTotalCheck="..math.floor(userTotalCheck).."\nuserComboCheck="..math.floor(userComboCheck).."\ndate="..date.."\nuserCheckOne="..userCheckOne.."\nboolDuanQian="..boolDuanQian..""
@@ -115,14 +122,22 @@ local userCheckOne = getUserConf(msg.fromQQ,"打卡时间",0)
 local today_ding = getUserToday(msg.fromQQ,"dingtimes",0)
 local coin=getUserConf(msg.fromQQ, "猫猫金币", 0)
 local bonus_arknights=getUserToday(msg.fromQQ, "today_draw_max", 0)
-  return "{nick}已经累计铲屎"..math.floor(userTotalCheck).."天，连续铲屎"..math.floor(userComboCheck).."天了喵——\n今日还有"..math.floor(5 - today_ding).."次机会在铲屎时遇到事件！\n口袋中现在有"..math.floor(coin).."枚金币和"..math.floor(3 - bonus_arknights).."张十连寻访券！"
+  return "{nick}已经累计铲屎"..math.floor(userTotalCheck).."天，连续铲屎"..math.floor(userComboCheck).."天了喵——\n今日还有"..math.floor(10 - today_ding).."次机会在铲屎时遇到事件！\n口袋中现在有"..math.floor(coin).."枚金币和"..math.floor(3 - bonus_arknights).."张十连寻访券！"
 end
 
 
+--以下为测试
+--function deBug(msg)
+--  setUserToday(msg.fromQQ, "dingtimes", 1)
+--  return "已重置铲屎次数"
+--end
+--
+--msg_order["测试铲屎第八阿哥"] = "deBug"
+
 --以下为事件
 function draw_eventI(msg)
-  local draw_arknights = math.random(12)
-  local draw_result = math.random()
+  local draw_arknights = math.random(14)
+  local draw_result = math.random(0, 1)
   local today_ding = getUserToday(msg.fromQQ,"dingtimes",0)
   if(draw_arknights == 1)then
     local event="大号猫砂盆"
@@ -148,10 +163,11 @@ function draw_eventI(msg)
       return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."你越挖越深，突然你挖到了一只被大家埋起来的山山，你决定挖深点埋掉山山免得被其他人挖出来。"
       end
   elseif(draw_arknights == 4)then
-      local event="神秘金币"
+      local event="一堆神秘金币"
+      local coinget=math.random(3,10)
+      setUserConf(msg.fromQQ, "猫猫金币", getUserConf(msg.fromQQ, "猫猫金币", 0)+ coinget)
       local coin=getUserConf(msg.fromQQ, "猫猫金币", 0)
-        setUserConf(msg.fromQQ, "猫猫金币", getUserConf(msg.fromQQ, "猫猫金币", 0)+1)
-        return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."你挖到了一枚印着猫猫图案的金币。\n你数了数口袋中的金币，现在有"..math.floor(coin).."枚。"
+      return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."你挖到了"..math.floor(coinget).."枚印着猫猫图案的金币。\n你数了数口袋中的金币，现在有"..math.floor(coin).."枚。"
   elseif(draw_arknights == 5)then
     local event="呆胶布"
     return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."呆比乱玩胶带，把铲子粘在地上了！你根本拿不起来，只能放弃铲屎的想法。"
@@ -163,9 +179,10 @@ function draw_eventI(msg)
     return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."当你在铲便便的时候，你听见面前紫金制成的猫砂盆里突然有声音呼唤你的名字，你本能地答应一声，然后被吸进去了！"
   elseif(draw_arknights == 8)then
     local event="急性肠炎"
-    local draw_result = math.random(0, getUserToday(msg.fromQQ, "today_draw_max", 0))
-    if(draw_result == 0)then
-    return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."呆比生病了！吓得多米诺赶紧去给呆比看病，你没有多余的寻访券能用来帮忙……"
+    local draw_arknights=3 - getUserToday(msg.fromQQ, "today_draw_max", 0)
+    local draw_result=math.random(0, 3)
+    if(draw_result > draw_arknights)then
+    return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."呆比生病了！吓得多米诺赶紧去给呆比看病，你没有足够的寻访券能用来帮忙……"
     else
       setUserToday(msg.fromQQ, "today_draw_max", getUserToday(msg.fromQQ, "today_draw_max", 0) + draw_result)
       return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."呆比生病了！吓得多米诺赶紧去给呆比看病，你也出了一份力把自己的"..math.floor(draw_result).."张寻访券交给了多米诺。"
@@ -182,6 +199,12 @@ function draw_eventI(msg)
   elseif(draw_arknights == 11)then
     local event="禁止色色"
     return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."你在猫砂里面挖到了奇怪的东西，拿出来仔细一看居然是一张色图，还没等你仔细品鉴，突然从旁边跳出一只浪客狗狗一刀斩了你的色图。[CQ:image,url=https://cdn.jsdelivr.net/gh/DomeenoH/pics@master/cheems.jpg]"
+  elseif(draw_arknights == 12)then
+    local event="多米诺好菜啊"
+    return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."你铲着猫砂的时候，突然福临心至，脱口而出一句“多米诺好菜啊！”\n你环顾四周似乎没人发现，于是松了一口气。\n却没注意到自己的影子上开始缠绕着挥舞着不可名状的触手。"
+  elseif(draw_arknights == 13)then
+    local event="镜花水月"
+    return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到I级事件【"..event.."】！\n".."你重复的进行着铲屎的工作，这时，你突然闻到了一股奇特的气味，仿佛有湿滑的触手爬上了你的身体。\n“刀客塔～想我了吗？”\n一声呼唤在你耳边响起，你的意识逐渐远去。\n下一刻，你睁开了眼睛，周围的一切还是跟往常一样，这难道是梦吗？[CQ:image,url=https://cdn.jsdelivr.net/gh/DomeenoH/pics@master/shuiyue480.jpg]"
   else
       local event="香蕉诅咒"
       if(draw_result == 0)then
@@ -201,23 +224,25 @@ function draw_eventII(msg)
     if(getUserConf(msg.fromQQ, "猫猫金币") <= 0)then
       return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到II级事件【"..event.."】！\n".."在埋头你铲着猫砂的时候，突然窜过来一只戴着眼罩的黑色猫猫，他打量了几眼身无分文的你，叼走了你的铲子。"
     else
+      local coin=getUserConf(msg.fromQQ, "猫猫金币")
       setUserToday(msg.fromQQ, "today_draw_max", getUserToday(msg.fromQQ, "today_draw_max", 0) - getUserConf(msg.fromQQ, "猫猫金币"), 0)
       setUserConf(msg.fromQQ, "猫猫金币", 0)
-      return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到II级事件【"..event.."】！\n".."在埋头你铲着猫砂的时候，突然窜过来一只戴着眼罩的黑色猫猫，他叼走了你浑身上下的"..math.floor(getUserConf(msg.fromQQ, "猫猫金币")).."枚金币并留下了"..math.floor(getUserConf(msg.fromQQ, "猫猫金币")).."张寻访券。"
+      return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到II级事件【"..event.."】！\n".."在埋头你铲着猫砂的时候，突然窜过来一只戴着眼罩的黑色海盗猫猫，他叼走了你浑身上下的"..math.floor(coin).."枚金币并留下了"..math.floor(coin).."张寻访券。"
     end
   elseif(draw_arknights == 2)then
     local event="猫砂空空"
-    if(getUserConf(msg.fromQQ, "猫猫金币", 0) > 1)then
-      today_ding = today_ding + 1
+    local coin=getUserConf(msg.fromQQ, "猫猫金币", 0)
+    if(coin > 1)then
+      today_ding = today_ding - 1
       setUserConf(msg.fromQQ, "猫猫金币", getUserConf(msg.fromQQ, "猫猫金币", 0) - 1)
       return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到II级事件【"..event.."】！\n".."你来到呆比的猫砂盆前意外地发现猫砂用完了！\n没办法你找到咖啡机花费1枚猫猫金币，给呆比买了一袋新的猫砂。\n铲屎机会+1！\n你数了数口袋中的金币，现在还剩"..math.floor(getUserConf(msg.fromQQ, "猫猫金币")).."枚。"
     elseif(getUserConf(msg.fromQQ, "猫猫金币", 0) > 0)then
-      today_ding = today_ding + 1
+      today_ding = today_ding - 1
       setUserConf(msg.fromQQ, "猫猫金币", getUserConf(msg.fromQQ, "猫猫金币", 0) - 1)
       return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到II级事件【"..event.."】！\n".."你来到呆比的猫砂盆前意外地发现猫砂用完了！\n没办法你找到咖啡机花费1枚猫猫金币，给呆比买了一袋新的猫砂。\n铲屎机会+1！\n你摸了摸口袋，里面已经没有金币剩下了。"
     elseif(getUserToday(msg.fromQQ, "today_draw_max", 0) > 0)then
       setUserToday(msg.fromQQ, "today_draw_max", getUserToday(msg.fromQQ, "today_draw_max", 0) + 1)
-      today_ding = today_ding + 1
+      today_ding = today_ding - 1
       return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到II级事件【"..event.."】！\n".."你来到呆比的猫砂盆前意外地发现猫砂用完了！\n没办法你找到咖啡机花费1张寻访券，给呆比买了一份新的猫砂。\n铲屎机会+1！"
     else
       return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到II级事件【"..event.."】！\n".."你来到呆比的猫砂盆前意外地发现猫砂用完了！\n你捏了捏空瘪的口袋，冷酷地离开了。"
@@ -304,7 +329,7 @@ function draw_eventIII(msg)
       return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到III级事件【"..event.."】！\n".."你刚靠近猫砂盆，突然一道白光闪过，你眼前出现了——[CQ:image,url=https://cdn.jsdelivr.net/gh/DomeenoH/pics@master/rickroll.gif]"
     end
   elseif(draw_arknights == 3)then
-    local event="Rick Ashley"
+    local event="魅魔猫娘"
     local draw_arknights = math.random(6)
     setUserToday(msg.fromQQ, "today_draw_max", getUserToday(msg.fromQQ, "today_draw_max", 0) - draw_arknights)
       return "{nick}第"..math.floor(today_ding).."次将头探向猫砂盆……\n遇到III级事件【"..event.."】！\n".."你挖着猫砂突然感到一阵恍惚，突然出现在一张大床上，眼前出现了一个自称木各曼的猫娘魅魔，ta在你身上一番索取后给了你"..math.floor(draw_arknights).."张寻访券作为回报。"
