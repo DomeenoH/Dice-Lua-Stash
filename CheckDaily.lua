@@ -4,7 +4,7 @@
 -- 版本 v1.0
 -- 更新日期 20210711
 -- 柴刀赋予灵魂（计时逻辑）
--- 多米诺修改 20211201
+-- 多米诺修改 20211203
 msg_order = {}
 
 function checkDaily(msg)
@@ -295,14 +295,14 @@ function draw_eventII(msg)
     local today_ding = getUserToday(msg.fromQQ, "dingtimes", 0)
     if (draw_arknights == 1) then
         local event = "海盗猫猫"
-        if (getUserConf(msg.fromQQ, "猫猫金币") <= 0) then
+        if (tonumber(getUserConf(msg.fromQQ, "猫猫金币", 0)) <= 0) then
             return "{nick}第" .. math.floor(today_ding) .. "次将头探向猫砂盆……\n遇到II级事件【" ..
                        event .. "】！\n" ..
                        "在埋头你铲着猫砂的时候，突然窜过来一只戴着眼罩的黑色猫猫，他打量了几眼身无分文的你，叼走了你的铲子。"
         else
-            local coin = getUserConf(msg.fromQQ, "猫猫金币")
+            local coin = getUserConf(msg.fromQQ, "猫猫金币", 0)
             setUserToday(msg.fromQQ, "today_draw_max",
-                getUserToday(msg.fromQQ, "today_draw_max", 0) - getUserConf(msg.fromQQ, "猫猫金币"), 0)
+                getUserToday(msg.fromQQ, "today_draw_max", 0) - getUserConf(msg.fromQQ, "猫猫金币", 0), 0)
             setUserConf(msg.fromQQ, "猫猫金币", 0)
             return "{nick}第" .. math.floor(today_ding) .. "次将头探向猫砂盆……\n遇到II级事件【" ..
                        event .. "】！\n" ..
@@ -312,26 +312,26 @@ function draw_eventII(msg)
     elseif (draw_arknights == 2) then
         local event = "猫砂空空"
         local coin = getUserConf(msg.fromQQ, "猫猫金币", 0)
-        if (coin > 1) then
-            today_ding = today_ding - 1
+        if (tonumber(coin) > 1) then
             setUserConf(msg.fromQQ, "猫猫金币", getUserConf(msg.fromQQ, "猫猫金币", 0) - 1)
+            setUserToday(msg.fromQQ, "dingtimes", today_ding - 1)
             return
-                "{nick}第" .. math.floor(today_ding + 1) .. "次将头探向猫砂盆……\n遇到II级事件【" ..
+                "{nick}第" .. math.floor(today_ding) .. "次将头探向猫砂盆……\n遇到II级事件【" ..
                     event .. "】！\n" ..
                     "你来到呆比的猫砂盆前意外地发现猫砂用完了！\n没办法你找到咖啡机花费1枚猫猫金币，给呆比买了一袋新的猫砂。\n铲屎机会+1！\n你数了数口袋中的金币，现在还剩" ..
-                    math.floor(getUserConf(msg.fromQQ, "猫猫金币")) .. "枚。"
-        elseif (getUserConf(msg.fromQQ, "猫猫金币", 0) > 0) then
-            today_ding = today_ding - 1
+                    math.floor(getUserConf(msg.fromQQ, "猫猫金币",0)) .. "枚。"
+        elseif (tonumber(getUserConf(msg.fromQQ, "猫猫金币", 0)) > 0) then
             setUserConf(msg.fromQQ, "猫猫金币", getUserConf(msg.fromQQ, "猫猫金币", 0) - 1)
+            setUserToday(msg.fromQQ, "dingtimes", today_ding - 1)
             return
-                "{nick}第" .. math.floor(today_ding + 1) .. "次将头探向猫砂盆……\n遇到II级事件【" ..
+                "{nick}第" .. math.floor(today_ding) .. "次将头探向猫砂盆……\n遇到II级事件【" ..
                     event .. "】！\n" ..
                     "你来到呆比的猫砂盆前意外地发现猫砂用完了！\n没办法你找到咖啡机花费1枚猫猫金币，给呆比买了一袋新的猫砂。\n铲屎机会+1！\n你摸了摸口袋，里面已经没有金币剩下了。"
-        elseif (getUserToday(msg.fromQQ, "today_draw_max", 0) > 0) then
+        elseif (tonumber(getUserToday(msg.fromQQ, "today_draw_max", 0)) > 0) then
             setUserToday(msg.fromQQ, "today_draw_max", getUserToday(msg.fromQQ, "today_draw_max", 0) + 1)
-            today_ding = today_ding - 1
+            setUserToday(msg.fromQQ, "dingtimes", today_ding - 1)
             return
-                "{nick}第" .. math.floor(today_ding + 1) .. "次将头探向猫砂盆……\n遇到II级事件【" ..
+                "{nick}第" .. math.floor(today_ding) .. "次将头探向猫砂盆……\n遇到II级事件【" ..
                     event .. "】！\n" ..
                     "你来到呆比的猫砂盆前意外地发现猫砂用完了！\n没办法你找到咖啡机花费1张寻访券，给呆比买了一份新的猫砂。\n铲屎机会+1！"
         else
@@ -564,7 +564,7 @@ function draw_eventIII(msg)
     elseif (draw_arknights == 8) then
         local event = "冥王星咖啡机"
         local coin = getUserConf(msg.fromQQ, "猫猫金币", 0)
-        if (coin < 1) then
+        if (tonumber(coin) < 1) then
             return "{nick}第" .. math.floor(today_ding) .. "次将头探向猫砂盆……\n遇到III级事件【" ..
                        event .. "】！\n" ..
                        "你挖出了一个长的像咖啡机的东西，你没有金币能够投进去，只能离开了。"
