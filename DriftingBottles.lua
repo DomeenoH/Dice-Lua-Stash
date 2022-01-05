@@ -45,7 +45,7 @@ reset_order = "漂流瓶重置"
 burn_after_read = 1
 
 -- 每日扔瓶子的上限
-DB_everyday_max_throw = 30
+DB_everyday_max_throw = 10
 
 -- 每日捡瓶子的上限
 DB_everyday_max_pick = 1
@@ -104,7 +104,7 @@ function throw_bottle(msg)
 		local letter = string.match(msg.fromMsg,"[%s]*(.-)[%s]*$",#throw_bottle_order+1)
 		-- 检测触发词后是否有剩余内容，如果只有触发词则返回帮助词条并跳出
 		if ( #letter == 0 ) then
-			return "漂流瓶！ 开发者兔兔零号机\n输入“"..throw_bottle_order.."”后跟你想说的内容将留言投入大海！\n输入“"..pick_bottle_order.."”来获取他人的留言！\n输入“"..drown_self_order.."”来查看当前漂流瓶数量！"
+			return "漂流瓶！ 开发者兔兔零号机\n输入“"..throw_bottle_order.."”后跟你想说的内容将留言投入收容682的盐酸池里！每日上限10\n输入“"..pick_bottle_order.."”来获取他人的留言！每日初始上限1个，每扔一次漂流瓶机会+1\n输入“"..drown_self_order.."”来查看当前漂流瓶数量！"
 		end
 		-- 判定是群聊还是私聊，合并所需内容
 		if ( msg.fromGroup == "0" ) then
@@ -125,12 +125,11 @@ msg_order[throw_bottle_order] = "throw_bottle"
 -- 捡漂流瓶程序
 function pick_bottle(msg)
 	-- 优先进行上限判定
-	if ( getUserToday(msg.fromQQ,"DB_everyday_pick",0)>= DB_everyday_max_pick ) then
+	if ( getUserToday(msg.fromQQ,"DB_everyday_pick",0) - getUserToday(msg.fromQQ,"DB_everyday_throw",0)>= DB_everyday_max_pick ) then
 		return "[CQ:at,qq="..msg.fromQQ.."]今天已经捞到足够多漂流瓶啦！"
 		else
 		local letter = read_file(bottle_text_path)
 		local letter_list = {}
-		setUserToday(msg.fromQQ,"DB_everyday_throw",getUserToday(msg.fromQQ, "DB_everyday_throw", 0)-1)
 		-- 随机读取其中一条内容并发送
 		if ( #letter == 0 ) then
 			return "现在海里空无一物，不信你自己跳进海里看看~"
@@ -145,8 +144,7 @@ function pick_bottle(msg)
 				table.remove(letter_list,n)
 				Dbottle_new = table.concat(letter_list,"c2xhc2g=")
 				overwrite_file(bottle_text_path,Dbottle_new)
-			end
-			
+			end			
 			setUserToday(msg.fromQQ, "DB_everyday_pick", getUserToday(msg.fromQQ, "DB_everyday_pick", 0)+1)
 			return letter_text
 		end
