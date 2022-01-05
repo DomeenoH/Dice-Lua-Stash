@@ -48,7 +48,7 @@ burn_after_read = 1
 DB_everyday_max_throw = 30
 
 -- 每日捡瓶子的上限
-DB_everyday_max_pick = 30
+DB_everyday_max_pick = 1
 
 --每日跳海的上限
 DB_everyday_max_drown = 1
@@ -130,6 +130,7 @@ function pick_bottle(msg)
 		else
 		local letter = read_file(bottle_text_path)
 		local letter_list = {}
+		setUserToday(msg.fromQQ,"DB_everyday_throw",getUserToday(msg.fromQQ, "DB_everyday_throw", 0)-1)
 		-- 随机读取其中一条内容并发送
 		if ( #letter == 0 ) then
 			return "现在海里空无一物，不信你自己跳进海里看看~"
